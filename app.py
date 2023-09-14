@@ -1,4 +1,4 @@
-from flask import Flask, request, jsonify,session
+from flask import Flask, request, jsonify, session
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import text
 from flask_marshmallow import Marshmallow
@@ -24,21 +24,27 @@ ma = Marshmallow(app)
 # Reflect the existing database tables
 db.Model.metadata.reflect(db.engine)
 
+
 # Map the existing tables
 class User(db.Model):
     __table__ = db.Model.metadata.tables['user']
 
+
 class Garden(db.Model):
     __table__ = db.Model.metadata.tables['garden']
+
 
 class Plants(db.Model):
     __table__ = db.Model.metadata.tables['plants']
 
+
 class Resource(db.Model):
     __table__ = db.Model.metadata.tables['resource']
 
+
 class Weeds(db.Model):
     __table__ = db.Model.metadata.tables['weeds']
+
 
 # Define Schemas
 class UserSchema(ma.SQLAlchemyAutoSchema):
@@ -46,31 +52,37 @@ class UserSchema(ma.SQLAlchemyAutoSchema):
         model = User
         load_instance = True
 
+
 class GardenSchema(ma.SQLAlchemyAutoSchema):
     class Meta:
         model = Garden
         load_instance = True
+
 
 class PlantsSchema(ma.SQLAlchemyAutoSchema):
     class Meta:
         model = Plants
         load_instance = True
 
+
 class WeedsSchema(ma.SQLAlchemyAutoSchema):
     class Meta:
         model = Weeds
         load_instance = True
 
+
 class ResourceSchema(ma.SQLAlchemyAutoSchema):
     class Meta:
         model = Resource
         load_instance = True
-#... Continue with other schemas ...
 
 
-#routes
+# ... Continue with other schemas ...
 
-#Login and register
+
+# routes
+
+# Login and register
 @app.route('/register', methods=['POST'])
 def register():
     data = request.get_json()
@@ -99,41 +111,50 @@ def login():
 
 # ----------- Garden ------------
 
-# Retrieve gardens for a user
+# Get garden information for a specific user
 @app.route('/garden', methods=['GET'])
-def get_gardens():
+def get_garden():
     user_id = session.get('user_id')
     if not user_id:
         return jsonify({"message": "Please log in first!"}), 401
 
-    gardens = Garden.query.filter_by(userId=user_id).all()
-    garden_schema = GardenSchema(many=True)
-    return jsonify(garden_schema.dump(gardens))
+    garden = Garden.query.filter_by(userId=user_id).first()
+    if not garden:
+        return jsonify({"message": "Garden not found!"}), 404
+
+    garden_data = {
+        "idgarden": garden.idgarden,
+        "landWidtth": garden.landWidtth,
+        "landLong": garden.landLong,
+        "userId": garden.userId
+    }
+
+    return jsonify(garden_data), 200
 
 
-# Add a garden for a user
-@app.route('/garden', methods=['POST'])
-def add_garden():
+# Update garden information
+@app.route('/garden', methods=['PUT'])2
+def update_garden():
     user_id = session.get('user_id')
     if not user_id:
         return jsonify({"message": "Please log in first!"}), 401
+
+    garden = Garden.query.filter_by(userId=user_id).first()
+    if not garden:
+        return jsonify({"message": "Garden not found!"}), 404
 
     data = request.get_json()
-    new_garden = Garden(landWidtth=data['landWidtth'], landLong=data['landLong'], userId=user_id)
-    db.session.add(new_garden)
+
+    if 'landWidtth' in data:
+        garden.landWidtth = data['landWidtth']
+
+    if 'landLong' in data:
+        garden.landLong = data['landLong']
+
     db.session.commit()
-    return jsonify({"message": "Garden added successfully!"}), 200
 
+    return jsonify({"message": "Garden updated successfully!"}), 200
 
-# Update a garden for a user
-@app.route('/garden/<int:garden_id>', methods=['PUT'])
-def update_garden(garden_id):
-# Implementation similar to add_garden but with checks and update functionality
-
-# Delete a garden for a user
-@app.route('/garden/<int:garden_id>', methods=['DELETE'])
-def delete_garden(garden_id):
-# Implementation similar to add_garden but with delete functionality
 
 # ----------- Plants ------------
 
@@ -151,6 +172,7 @@ def get_plants():
     plants = Plants.query.filter(Plants.idGarden.in_(garden_ids)).all()
     plants_schema = PlantsSchema(many=True)
     return jsonify(plants_schema.dump(plants))
+
 
 # Add new plant
 @app.route('/plants', methods=['POST'])
@@ -179,6 +201,7 @@ def add_plant():
     db.session.add(new_plant)
     db.session.commit()
     return jsonify({"message": "Plant added successfully!"}), 200
+
 
 # Update plant information
 @app.route('/plants/<int:plant_id>', methods=['PUT'])
