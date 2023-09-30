@@ -10,7 +10,7 @@ HOSTNAME = "127.0.0.1"
 PORT = 3306
 USERNAME = "root"
 PASSWORD = "qwqw.123"
-DATABASE = "farmbot_database"
+DATABASE = "farmbot"
 
 app.config['SQLALCHEMY_DATABASE_URI'] = (f"mysql+pymysql://{USERNAME}:{PASSWORD}@{HOSTNAME}:"
                                          f"{PORT}/{DATABASE}?charset=utf8")
