@@ -77,38 +77,11 @@ class ResourceSchema(ma.SQLAlchemyAutoSchema):
         load_instance = True
 
 
+
 # ... Continue with other schemas ...
 
 
 # routes
-
-# Login and register
-@app.route('/register', methods=['POST'])
-def register():
-    data = request.get_json()
-    hashed_password = generate_password_hash(data['password'], method='sha256')
-
-    new_user = User(userName=data['userName'], password=hashed_password)
-    db.session.add(new_user)
-    db.session.commit()
-
-    return jsonify({"message": "User registered successfully!"}), 201
-
-
-@app.route('/login', methods=['POST'])
-def login():
-    data = request.get_json()
-    user = User.query.filter_by(userName=data['userName']).first()
-
-    if not user:
-        return jsonify({"message": "Username not found!"}), 404
-
-    if check_password_hash(user.password, data['password']):
-        return jsonify({"message": "Login successful!"}), 200
-    else:
-        return jsonify({"message": "Wrong password!"}), 401
-
-
 # ----------- Garden ------------
 
 # Get garden information for a specific user
@@ -133,7 +106,7 @@ def get_garden():
 
 
 # Update garden information
-@app.route('/garden', methods=['PUT'])2
+@app.route('/garden', methods=['PUT'])
 def update_garden():
     user_id = session.get('user_id')
     if not user_id:
@@ -259,6 +232,125 @@ def delete_plant(plant_id):
     db.session.delete(plant)
     db.session.commit()
     return jsonify({"message": "Plant deleted successfully!"}), 200
+
+
+# ----------- Resource ------------
+
+# Get all resource information for a specific user:
+
+@app.route('/resource', methods=['GET'])
+def get_resources():
+    all_resources = Resource.query.all()
+    resources_schema = ResourceSchema(many=True)
+    result = resources_schema.dump(all_resources)
+    return jsonify(result)
+
+# Add new resource
+
+@app.route('/resource', methods=['POST'])
+def add_resource():
+    data = request.get_json()
+    new_resource = Resource(
+        electricityUsed=data['electricityUsed'],
+        waterUsed=data['waterUsed'],
+        fertiliserused=data['fertiliserused'],
+        date=data['date'],
+        landid=data['landid']
+    )
+    db.session.add(new_resource)
+    db.session.commit()
+    resource_schema = ResourceSchema(many=True)
+
+    return resource_schema.jsonify(new_resource)
+
+
+# Update new resource
+@app.route('/resource/<id>', methods=['PUT'])
+def update_resource(id):
+    resource = Resource.query.get(id)
+    resource_schema = ResourceSchema(many=True)
+    if resource:
+        data = request.get_json()
+        resource.electricityUsed = data['electricityUsed']
+        resource.waterUsed = data['waterUsed']
+        resource.fertiliserused = data['fertiliserused']
+        resource.date = data['date']
+        resource.landid = data['landid']
+        db.session.commit()
+        return resource_schema.jsonify(resource)
+    else:
+        return jsonify({"message": "Resource not found"}), 404
+
+
+# Delete resource
+@app.route('/resource/<id>', methods=['DELETE'])
+def delete_resource(id):
+    resource = Resource.query.get(id)
+    if resource:
+        db.session.delete(resource)
+        db.session.commit()
+        return jsonify({"message": "Resource deleted successfully"})
+    else:
+        return jsonify({"message": "Resource not found"}), 404
+
+
+# ----------- Weeds ------------
+
+# Get all weeds information for a specific user:
+@app.route('/weeds', methods=['GET'])
+def get_all_weeds():
+    all_weeds = Weeds.query.all()
+    weeds_schema = WeedsSchema(many=True)
+    result = weeds_schema.dump(all_weeds)
+    return jsonify(result)
+
+
+# Add new weeds
+@app.route('/weeds', methods=['POST'])
+def add_weeds():
+    data = request.get_json()
+    new_weeds = Weeds(
+        weedXpoint=data['weedXpoint'],
+        weedYpoint=data['weedYpoint'],
+        weedSize=data['weedSize'],
+        idLand=data['idLand']
+    )
+    db.session.add(new_weeds)
+    db.session.commit()
+    weeds_schema = WeedsSchema(many=True)
+    return weeds_schema.jsonify(new_weeds)
+
+
+# Update new weeds
+@app.route('/weeds/<id>', methods=['PUT'])
+def update_weeds(id):
+    weeds = Weeds.query.get(id)
+    if weeds:
+        data = request.get_json()
+        weeds.weedXpoint = data['weedXpoint']
+        weeds.weedYpoint = data['weedYpoint']
+        weeds.weedSize = data['weedSize']
+        weeds.idLand = data['idLand']
+        db.session.commit()
+        weeds_schema = WeedsSchema(many=True)
+        return weeds_schema.jsonify(weeds)
+    else:
+        return jsonify({"message": "Weed not found"}), 404
+
+
+# Delete a weed
+@app.route('/weeds/<id>', methods=['DELETE'])
+def delete_weeds(id):
+    weeds = Weeds.query.get(id)
+    if weeds:
+        db.session.delete(weeds)
+        db.session.commit()
+        return jsonify({"message": "Weed deleted successfully"})
+    else:
+        return jsonify({"message": "Weed not found"}), 404
+
+
+
 
 
 if __name__ == '__main__':
