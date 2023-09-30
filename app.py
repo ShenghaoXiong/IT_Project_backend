@@ -21,60 +21,61 @@ app.config['SECRET_KEY'] = 'qwqw.123'
 db = SQLAlchemy(app)
 ma = Marshmallow(app)
 
-# Reflect the existing database tables
-db.Model.metadata.reflect(db.engine)
+with app.app_context():
+    # Reflect the existing database tables
+    db.Model.metadata.reflect(db.engine)
 
 
-# Map the existing tables
-class User(db.Model):
-    __table__ = db.Model.metadata.tables['user']
+    # Map the existing tables
+    class User(db.Model):
+        __table__ = db.Model.metadata.tables['user']
 
 
-class Garden(db.Model):
-    __table__ = db.Model.metadata.tables['garden']
+    class Garden(db.Model):
+        __table__ = db.Model.metadata.tables['garden']
 
 
-class Plants(db.Model):
-    __table__ = db.Model.metadata.tables['plants']
+    class Plants(db.Model):
+        __table__ = db.Model.metadata.tables['plants']
 
 
-class Resource(db.Model):
-    __table__ = db.Model.metadata.tables['resource']
+    class Resource(db.Model):
+        __table__ = db.Model.metadata.tables['resource']
 
 
-class Weeds(db.Model):
-    __table__ = db.Model.metadata.tables['weeds']
+    class Weeds(db.Model):
+        __table__ = db.Model.metadata.tables['weeds']
 
 
 # Define Schemas
-class UserSchema(ma.SQLAlchemyAutoSchema):
-    class Meta:
-        model = User
-        load_instance = True
+    class UserSchema(ma.SQLAlchemyAutoSchema):
+        class Meta:
+            model = User
+            load_instance = True
 
 
-class GardenSchema(ma.SQLAlchemyAutoSchema):
-    class Meta:
-        model = Garden
-        load_instance = True
+    class GardenSchema(ma.SQLAlchemyAutoSchema):
+        class Meta:
+            model = Garden
+            load_instance = True
 
 
-class PlantsSchema(ma.SQLAlchemyAutoSchema):
-    class Meta:
-        model = Plants
-        load_instance = True
+    class PlantsSchema(ma.SQLAlchemyAutoSchema):
+        class Meta:
+            model = Plants
+            load_instance = True
 
 
-class WeedsSchema(ma.SQLAlchemyAutoSchema):
-    class Meta:
-        model = Weeds
-        load_instance = True
+    class WeedsSchema(ma.SQLAlchemyAutoSchema):
+        class Meta:
+            model = Weeds
+            load_instance = True
 
 
-class ResourceSchema(ma.SQLAlchemyAutoSchema):
-    class Meta:
-        model = Resource
-        load_instance = True
+    class ResourceSchema(ma.SQLAlchemyAutoSchema):
+        class Meta:
+            model = Resource
+            load_instance = True
 
 
 
