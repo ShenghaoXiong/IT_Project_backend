@@ -1,14 +1,19 @@
-runtime: python39  # 你可以根据你的需要选择 Python 的版本
-instance_class: F1
-automatic_scaling:
+runtime: python39  # 使用 Python 3.9 运行时
+
+instance_class: F2  # 选择实例类，可以根据需要调整
+
+env_variables:  # 设置环境变量
+  HOSTNAME: "127.0.0.1"
+  PORT: "3306"
+  USERNAME: "root"
+  PASSWORD: "qwqw.123"
+  DATABASE: "farmbot"
+  SECRET_KEY: "qwqw.123"
+
+automatic_scaling:  # 自动缩放的配置，可以根据需要调整
   target_cpu_utilization: 0.65
   min_instances: 1
-  max_instances: 10  # 你可以根据你的需要调整这些参数
+  max_instances: 10
 
-entrypoint: gunicorn -b :$PORT app:app  # 这里假设你的 Flask app 对象的名字是 'app'
+entrypoint: gunicorn -b :$PORT main:app  # 指定入口点，其中 main 是你的主 Python 文件名，app 是 Flask 应用实例
 
-env_variables:
-  SECRET_KEY: "your-secret-key"  # 你可以设置环境变量
-
-runtime_config:
-  python_version: 3

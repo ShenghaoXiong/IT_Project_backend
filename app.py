@@ -3,8 +3,11 @@ from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import text
 from flask_marshmallow import Marshmallow
 from werkzeug.security import check_password_hash, generate_password_hash
+from flask_cors import CORS
 
 app = Flask(__name__)
+CORS(app)
+
 
 HOSTNAME = "127.0.0.1"
 PORT = 3306
@@ -83,6 +86,12 @@ with app.app_context():
 
 
 # routes
+
+@app.route('/favicon.ico')
+def favicon():
+    return send_from_directory(os.path.join(app.root_path, 'static'),
+                               'favicon.ico', mimetype='image/vnd.microsoft.icon')
+
 # ----------- Garden ------------
 
 # Get garden information for a specific user
