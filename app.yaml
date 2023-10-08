@@ -3,12 +3,12 @@ runtime: python39  # 使用 Python 3.9 运行时
 instance_class: F2  # 选择实例类，可以根据需要调整
 
 env_variables:  # 设置环境变量
-  HOSTNAME: "127.0.0.1"
+  HOSTNAME: "34.129.71.70"
   PORT: "3306"
   USERNAME: "root"
-  PASSWORD: "qwqw.123"
-  DATABASE: "farmbot"
-  SECRET_KEY: "qwqw.123"
+  PASSWORD: "123456"
+  DATABASE: "farmbotdata"
+  SECRET_KEY: "123456"
 
 automatic_scaling:  # 自动缩放的配置，可以根据需要调整
   target_cpu_utilization: 0.65

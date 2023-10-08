@@ -9,11 +9,11 @@ app = Flask(__name__)
 CORS(app)
 
 
-HOSTNAME = "127.0.0.1"
+HOSTNAME = "34.129.71.70"
 PORT = 3306
 USERNAME = "root"
-PASSWORD = "qwqw.123"
-DATABASE = "farmbot"
+PASSWORD = "123456"
+DATABASE = "farmbotdata"
 
 app.config['SQLALCHEMY_DATABASE_URI'] = (f"mysql+pymysql://{USERNAME}:{PASSWORD}@{HOSTNAME}:"
                                          f"{PORT}/{DATABASE}?charset=utf8")
@@ -83,7 +83,7 @@ with app.app_context():
 
 
 # ... Continue with other schemas ...
-
+USERID = 1
 
 # routes
 
@@ -97,7 +97,7 @@ def favicon():
 # Get garden information for a specific user
 @app.route('/garden', methods=['GET'])
 def get_garden():
-    user_id = session.get('user_id')
+    user_id = USERID           # session.get('user_id')
     if not user_id:
         return jsonify({"message": "Please log in first!"}), 401
 
@@ -118,7 +118,7 @@ def get_garden():
 # Update garden information
 @app.route('/garden', methods=['PUT'])
 def update_garden():
-    user_id = session.get('user_id')
+    user_id = USERID #session.get('user_id')
     if not user_id:
         return jsonify({"message": "Please log in first!"}), 401
 
@@ -144,7 +144,7 @@ def update_garden():
 # Get all plant information for a specific user:
 @app.route('/plants', methods=['GET'])
 def get_plants():
-    user_id = session.get('user_id')
+    user_id = USERID  #session.get('user_id')
     if not user_id:
         return jsonify({"message": "Please log in first!"}), 401
 
@@ -160,7 +160,7 @@ def get_plants():
 # Add new plant
 @app.route('/plants', methods=['POST'])
 def add_plant():
-    user_id = session.get('user_id')
+    user_id = USERID #session.get('user_id')
     if not user_id:
         return jsonify({"message": "Please log in first!"}), 401
 
@@ -189,7 +189,7 @@ def add_plant():
 # Update plant information
 @app.route('/plants/<int:plant_id>', methods=['PUT'])
 def update_plant(plant_id):
-    user_id = session.get('user_id')
+    user_id = USERID #session.get('user_id')
     if not user_id:
         return jsonify({"message": "Please log in first!"}), 401
 
@@ -227,7 +227,7 @@ def update_plant(plant_id):
 # Delete a plant
 @app.route('/plants/<int:plant_id>', methods=['DELETE'])
 def delete_plant(plant_id):
-    user_id = session.get('user_id')
+    user_id = USERID #session.get('user_id')
     if not user_id:
         return jsonify({"message": "Please log in first!"}), 401
 
