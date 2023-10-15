@@ -68,6 +68,8 @@ with app.app_context():
             model = Plants
             load_instance = True
 
+        idGarden = fields.Int()
+
 
     class WeedsSchema(ma.SQLAlchemyAutoSchema):
         class Meta:
@@ -174,7 +176,10 @@ def add_plant():
         plantDay=data['plantDay'],
         plantXpoint=data['plantXpoint'],
         plantYpoint=data['plantYpoint'],
-        radius=data['radius']
+        radius=data['radius'],
+        binomialName=data['binomialName'],
+        lastWatering=data.get('lastWatering'),
+        type = data.get('type')
     )
     db.session.add(new_plant)
     db.session.commit()
@@ -214,6 +219,16 @@ def update_plant(plant_id):
 
     if 'radius' in data:
         plant.radius = data['radius']
+
+    if 'binomialName' in data:
+        plant.plantYpoint = data['binomialName']
+
+    if 'lastWatering' in data:
+        plant.radius = data['lastWatering']
+
+    if 'type' in data:
+        plant.radius = data['type']
+
 
     db.session.commit()
     return jsonify({"message": "Plant updated successfully!"}), 200
@@ -260,7 +275,9 @@ def add_resource():
         waterUsed=data['waterUsed'],
         fertiliserused=data['fertiliserused'],
         date=data['date'],
-        landid=data['landid']
+        landid=data['landid'],
+        humidity=data['humidity'],
+        temp=data['temp']
     )
     db.session.add(new_resource)
     db.session.commit()
@@ -281,6 +298,8 @@ def update_resource(id):
         resource.fertiliserused = data['fertiliserused']
         resource.date = data['date']
         resource.landid = data['landid']
+        resource.humidity = data['humidity']
+        resource.temp = data['temp']
         db.session.commit()
         return resource_schema.jsonify(resource)
     else:
