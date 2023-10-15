@@ -68,7 +68,6 @@ with app.app_context():
             model = Plants
             load_instance = True
 
-        idGarden = fields.Int()
 
 
     class WeedsSchema(ma.SQLAlchemyAutoSchema):
