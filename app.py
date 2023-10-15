@@ -87,11 +87,6 @@ USERID = 1
 
 # routes
 
-@app.route('/favicon.ico')
-def favicon():
-    return send_from_directory(os.path.join(app.root_path, 'static'),
-                               'favicon.ico', mimetype='image/vnd.microsoft.icon')
-
 # ----------- Garden ------------
 
 # Get garden information for a specific user
